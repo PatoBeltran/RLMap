@@ -36,6 +36,9 @@ class Light():
         if (self.t != 0):
             self.t.cancel()
             self.t = 0
+
+    def is_green(self):
+        return self.light_on == c.GREEN_LIGHT
     
     def draw(self, canvas):
         green_color = c.COLOR_BLACK

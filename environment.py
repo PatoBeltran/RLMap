@@ -30,9 +30,6 @@ class Environment():
         for street in self.streets:
             self.cars.append(Car.create_new_car(street.get_random_lane(), randint(20, 50)))
 
-        # self.streets[0].turn_light_red()
-        # self.pedestrians.append(Pedestrian.create_random(self.streets[randint(0,c.NUMBER_OF_STREETS-1)]))
-
         self.draw(self.canvas)
         self.start_movement()
 
@@ -62,6 +59,16 @@ class Environment():
     def start_movement(self):
         self.t = Timer(1, self._move)
         self.t.start()
+
+    def stop_random_street(self):
+        strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
+        if (strt.is_light_green()):
+            strt.turn_light_red()
+
+    def create_random_pedestrian(self):
+        if (len(self.pedestrians) < c.LIMIT_OF_PEDESTRIANS):
+            strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
+            self.pedestrians.append(Pedestrian.create_random(strt))
 
     def on_closing(self):
         self.t.cancel()
