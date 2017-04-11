@@ -2,6 +2,7 @@ from Tkinter import *
 import constants as c
 from lane import Lane
 from car import Car
+from light import Light
 from random import randint
 
 class Street():
@@ -17,9 +18,14 @@ class Street():
             self.lanes.append(Lane(self, initial_x + i*(c.LANE_WIDTH+c.DOTTED_LINE_WIDTH), i == c.LANES_PER_STREET - 1))
 
         self.cars.append(Car.create_new_car(self.lanes[randint(0,1)], 40))
+        
+        self.light = Light(self.x, randint(100, c.HEIGHT-100), self.width)
     
     def get_direction(self):
         return self.direction
+
+    # def check_collisions(self):
+
 
     def update(self):
         for car in self.cars:
@@ -36,5 +42,7 @@ class Street():
             
         for car in self.cars:
             car.draw(canvas)
+
+        self.light.draw(canvas)
 
 

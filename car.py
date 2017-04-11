@@ -13,6 +13,9 @@ class Car():
     @staticmethod
     def create_new_car(lane, speed):
         return Car(COLORS[randint(0,7)], lane, speed, 0)
+
+    def change_lanes(self, new_lane):
+        self.lane = new_lane
     
     def calculate_position(self):
         direct = self.lane.get_direction()

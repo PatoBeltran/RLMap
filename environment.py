@@ -6,12 +6,17 @@ import time
 
 class Environment():
     def __init__(self, master):
-        master.title("UT Street Map")
+        self.master = master
+        self.master.title("UT Street Map")
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
+        
         street_w = (c.LANE_WIDTH+c.DOTTED_LINE_WIDTH)*c.LANES_PER_STREET - c.DOTTED_LINE_WIDTH + c.STREET_MIDDLE_WIDTH
         self.width = c.NUMBER_OF_STREETS * street_w - c.STREET_MIDDLE_WIDTH;
         
-        self.canvas = Canvas(master, width = self.width, height = c.HEIGHT, bg = c.COLOR_WHITE)
+        self.canvas = Canvas(self.master, width = self.width, height = c.HEIGHT, bg = c.COLOR_WHITE)
         self.canvas.pack()
+
+        self.t = 0
 
         self.streets = []
         for i in range(0, c.NUMBER_OF_STREETS):
@@ -37,6 +42,11 @@ class Environment():
         self.start_movement()
             
     def start_movement(self):
-        t = Timer(1, self._move)
-        t.start()
+        self.t = Timer(1, self._move)
+        self.t.start()
+
+    def on_closing(self):
+        self.t.cancel()
+        self.master.destroy()
+
 
