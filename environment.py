@@ -14,9 +14,16 @@ class Environment():
         self.streets = []
         for i in range(0, c.NUMBER_OF_STREETS):
             self.streets.append(Street(i*street_w, (c.DIRECTION_DOWN if i < c.NUMBER_OF_STREETS/2 else c.DIRECTION_UP), i == c.NUMBER_OF_STREETS-1))
+
+        self.draw(self.canvas)
+        
+        # self.start_movement()
+
+    def draw(self, canvas):
+        canvas.delete("all")
+        for i in range(0, c.NUMBER_OF_STREETS):
             self.streets[i].draw(self.canvas)
 
-        # self.start_movement()
 
     # def _move(self):
         # w = self.rectWidth

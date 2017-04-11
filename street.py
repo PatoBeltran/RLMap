@@ -12,6 +12,9 @@ class Street():
         for i in range(0, c.LANES_PER_STREET):
             self.lanes.append(Lane(self, initial_x + i*(c.LANE_WIDTH+c.DOTTED_LINE_WIDTH), i == c.LANES_PER_STREET - 1))
     
+    def get_direction(self):
+        return self.direction
+
     def draw(self, canvas):
         canvas.create_rectangle(self.x, 0, self.x+self.width, c.HEIGHT, fill=c.COLOR_STREET_GRAY)
         if (not self.is_last):

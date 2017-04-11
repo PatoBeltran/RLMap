@@ -1,5 +1,6 @@
 from Tkinter import *
 import constants as c
+from car import Car
 
 class Lane():
     def __init__(self, street, initial_x, is_last):
@@ -8,6 +9,12 @@ class Lane():
         self.street = street
         self.is_last = is_last
 
+    def get_car_x(self):
+        return self.x + self.width/2 - c.CAR_WIDTH/2
+
+    def get_direction(self):
+        return self.street.get_direction()
+
     def draw(self, canvas):
         canvas.create_rectangle(self.x, 0, self.x+self.width, \
                 c.HEIGHT, outline=c.COLOR_STREET_GRAY, fill=c.COLOR_STREET_GRAY)
@@ -15,4 +22,6 @@ class Lane():
             middle_pos = self.x + self.width + c.DOTTED_LINE_WIDTH/2
             canvas.create_line(middle_pos, 0, middle_pos, c.HEIGHT, fill=c.COLOR_WHITE, width=c.DOTTED_LINE_WIDTH, dash=(40,40))
 
+        # a = Car.create_new_car(self, 10)
+        # a.draw(canvas)
 
