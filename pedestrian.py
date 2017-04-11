@@ -12,11 +12,11 @@ class Pedestrian():
     def create_random(street):
         return Pedestrian(street, randint(100,c.HEIGHT-100), randint(2,3))
     
-    def has_finished_crossing(self, street):
+    def has_finished_crossing(self):
         if self.direction == c.DIRECTION_LEFT:
-            return self.x > street.get_ending_for_direction(self.direction)
+            return self.x > self.street.get_ending_for_direction(self.direction)
         else:
-            return self.x < street.get_ending_for_direction(self.direction)
+            return self.x < self.street.get_ending_for_direction(self.direction)
 
     def update(self):
         if self.direction == c.DIRECTION_LEFT:

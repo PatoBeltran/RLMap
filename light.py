@@ -1,5 +1,7 @@
 from Tkinter import *
 import constants as c
+from threading import Timer
+from random import randint
 
 class Light():
     def __init__(self, x, y, width):
@@ -7,10 +9,34 @@ class Light():
         self.y = y
         self.width = width
         self.light_on = c.GREEN_LIGHT
+        self.t = 0        
 
-    def change_light(self, new_light):
+    def _change_light(self, new_light):
         self.light_on = new_light
 
+    def stop(self):
+        self._change_light(c.YELLOW_LIGHT)
+        self.t = Timer(c.YELLOW_LIGHT_DURATION, self._set_red)
+        self.t.start()
+
+    def go(self):
+        self.cancel_timer()
+        self._change_light(c.GREEN_LIGHT)
+
+    def _set_red(self):
+        self._change_light(c.RED_LIGHT)
+        self.t = Timer(randint(c.YELLOW_LIGHT_DURATION, c.YELLOW_LIGHT_DURATION+10), self._set_green)
+        self.t.start()
+
+    def _set_green(self):
+        self._change_light(c.GREEN_LIGHT)
+        self.t = 0
+
+    def cancel_timer(self):
+        if (self.t != 0):
+            self.t.cancel()
+            self.t = 0
+    
     def draw(self, canvas):
         green_color = c.COLOR_BLACK
         yellow_color = c.COLOR_BLACK
