@@ -26,6 +26,9 @@ class Car():
                 pos = (-1 * (self.position - c.HEIGHT)%c.HEIGHT)
             return pos - c.CAR_HEIGHT
 
+    def update(self):
+        self.position = (self.position + self.speed) % c.HEIGHT
+
     def draw(self, canvas):
         y = self.calculate_position()
         x = self.lane.get_car_x()

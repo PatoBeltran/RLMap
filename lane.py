@@ -22,6 +22,3 @@ class Lane():
             middle_pos = self.x + self.width + c.DOTTED_LINE_WIDTH/2
             canvas.create_line(middle_pos, 0, middle_pos, c.HEIGHT, fill=c.COLOR_WHITE, width=c.DOTTED_LINE_WIDTH, dash=(40,40))
 
-        # a = Car.create_new_car(self, 10)
-        # a.draw(canvas)
-

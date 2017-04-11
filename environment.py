@@ -1,6 +1,8 @@
 from Tkinter import *
 import constants as c
 from street import Street
+from threading import Timer
+import time
 
 class Environment():
     def __init__(self, master):
@@ -17,43 +19,24 @@ class Environment():
 
         self.draw(self.canvas)
         
-        # self.start_movement()
+        self.start_movement()
+
+    def update(self):
+        for strt in self.streets:
+            strt.update()
 
     def draw(self, canvas):
         canvas.delete("all")
         for i in range(0, c.NUMBER_OF_STREETS):
             self.streets[i].draw(self.canvas)
 
-
-    # def _move(self):
-        # w = self.rectWidth
-        # while True:
-            # lock = threading.Lock()
-            # lock.acquire()
-            # endRect = self.rectangles.pop()
-            # frontCoords = self.canvas.coords(self.rectangles[0])
-            # endCoords = self.canvas.coords(endRect)
-            # #(Below for Debugging)
-            # #print self.direction
-            # #print "Front: " + str(frontCoords) + " Back: " + str(endCoords)
-            # if self.direction == "left":
-                # self.canvas.move(self.canvas.gettags(endRect), int(frontCoords[0]-endCoords[0])-w,\
-                                 # int(frontCoords[1]-endCoords[1]))
-            # elif self.direction == "down":
-                # self.canvas.move(self.canvas.gettags(endRect), int(frontCoords[0]-endCoords[0]),\
-                                 # int(frontCoords[1]-endCoords[1])+w)
-            # elif self.direction == "right":
-                # self.canvas.move(self.canvas.gettags(endRect), int(frontCoords[0]-endCoords[0])+w,\
-                                 # int(frontCoords[1]-endCoords[1]))
-            # elif self.direction == "up":
-                # self.canvas.move(self.canvas.gettags(endRect), int(frontCoords[0]-endCoords[0]),\
-                                 # int(frontCoords[1]-endCoords[1])-w)
-            # self.canvas.after(100)
-            # self.rectangles.insert(0, endRect)
-            # lock.release()
-            # self.check_bounds()
-            # self.check_collide()
-
-    # def start_movement(self):
-        # threading.Thread(target=self._move).start()
+    def _move(self):
+        self.update()
+        self.draw(self.canvas)
+        self.canvas.after(100)
+        self.start_movement()
+            
+    def start_movement(self):
+        t = Timer(1, self._move)
+        t.start()
 
