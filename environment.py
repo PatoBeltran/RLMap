@@ -20,6 +20,8 @@ class Environment():
         self.canvas.pack()
 
         self.t = 0
+        self.t_s = 0
+        self.t_p = 0
         self.cars = []
         self.pedestrians = []
         self.streets = []
@@ -27,11 +29,11 @@ class Environment():
         for i in range(0, c.NUMBER_OF_STREETS):
             self.streets.append(Street(i*street_w, (c.DIRECTION_DOWN if i < c.NUMBER_OF_STREETS/2 else c.DIRECTION_UP), i == c.NUMBER_OF_STREETS-1))
 
-        for street in self.streets:
-            self.cars.append(Car.create_new_car(street.get_random_lane(), randint(20, 50)))
-
+        self._populate_with_cars()
         self.draw(self.canvas)
         self.start_movement()
+        self.random_stop()
+        self.random_pedestrian()
 
     def update(self):
         for pedestrian in self.pedestrians:
@@ -39,7 +41,6 @@ class Environment():
         for car in self.cars:
             car.update()
         self.pedestrians = filter(lambda ped: not ped.has_finished_crossing(), self.pedestrians)
-
 
     def draw(self, canvas):
         canvas.delete("all")
@@ -59,19 +60,35 @@ class Environment():
     def start_movement(self):
         self.t = Timer(1, self._move)
         self.t.start()
+    
+    def random_stop(self):
+        self.t_s = Timer(randint(0, c.RANDOM_STOP_MAX), self._stop_random_street)
+        self.t_s.start()
 
-    def stop_random_street(self):
+    def random_pedestrian(self):
+        self.t_p = Timer(randint(0, c.RANDOM_PEDESTRIAN_MAX), self._create_random_pedestrian)
+        self.t_p.start()
+
+    def _stop_random_street(self):
         strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
         if (strt.is_light_green()):
             strt.turn_light_red()
+        self.random_stop()
 
-    def create_random_pedestrian(self):
-        if (len(self.pedestrians) < c.LIMIT_OF_PEDESTRIANS):
+    def _populate_with_cars(self):
+        for street in self.streets:
+            self.cars.append(Car.create_new_car(street.get_random_lane(), randint(20, 50)))
+
+    def _create_random_pedestrian(self):
+        if (len(self.pedestrians) <= c.LIMIT_OF_PEDESTRIANS):
             strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
             self.pedestrians.append(Pedestrian.create_random(strt))
+        self.random_pedestrian()
 
     def on_closing(self):
-        self.t.cancel()
+        if self.t != 0: self.t.cancel() 
+        if self.t_s != 0: self.t_s.cancel() 
+        if self.t_p != 0: self.t_p.cancel() 
         for strt in self.streets:
             strt.cancel_light()
         self.master.destroy()

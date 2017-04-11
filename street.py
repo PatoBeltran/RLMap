@@ -46,7 +46,7 @@ class Street():
         self.light.go()
 
     def is_light_green(self):
-        self.light.is_green()
+        return self.light.is_green()
 
     def cancel_light(self):
         self.light.cancel_timer()
