@@ -20,7 +20,7 @@ class Street():
             self.lanes.append(Lane(self, initial_x + i*(c.LANE_WIDTH+c.DOTTED_LINE_WIDTH), i == c.LANES_PER_STREET - 1))
 
         self.cars.append(Car.create_new_car(self.lanes[randint(0,1)], 40))
-        self.pedestrians.append(Pedestrian.create_random_pedestrian(self))
+        self.pedestrians.append(Pedestrian.create_random(self))
         
         self.light = Light(self.x, randint(100, c.HEIGHT-100), self.width)
     
