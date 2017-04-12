@@ -59,7 +59,7 @@ class Car():
         else:
             return 0
     
-    def pedestrian_is_approaching(self, pedestrian):
+    def approaching_to_pedestrian(self, pedestrian):
         ped_dir = pedestrian.get_direction()
         car_x = self.lane.get_car_x()
         if ped_dir == c.DIRECTION_LEFT:
