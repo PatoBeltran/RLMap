@@ -21,6 +21,23 @@ class Car():
     def change_lanes(self, new_lane):
         self.lane = new_lane
     
+    def distance_to_light(self):
+        direct = self.lane.get_direction()
+        if direct == c.DIRECTION_DOWN:
+            if self.position <= c.LIGHT_POSITION:
+                return c.LIGHT_POSITION - self.position
+            elif self.position >= c.LIGHT_POSITION + c.LIGHT_HEIGHT:
+                return self.position - (c.LIGHT_POSITION + c.LIGHT_HEIGHT)
+            else:
+                return 0
+        else:
+            if self.position <= c.LIGHT_POSITION - c.LIGHT_HEIGHT:
+                return c.LIGHT_POSITION - c.LIGHT_HEIGHT - self.position
+            elif self.position >= c.LIGHT_POSITION:
+                return self.position - c.LIGHT_POSITION
+            else:
+                return 0
+
     def calculate_position(self):
         direct = self.lane.get_direction()
         if direct == c.DIRECTION_DOWN:
