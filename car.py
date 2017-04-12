@@ -1,5 +1,6 @@
 import constants as c
 from random import randint
+from pedestrian import Pedestrian
 
 COLORS = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#f1c40f", "#e67e22", "#e74c3c"]
 
@@ -37,6 +38,31 @@ class Car():
                 return self.position - c.LIGHT_POSITION
             else:
                 return 0
+
+    def pedestrian_in_same_street(self, pedestrian):
+        return self.lane.get_street() == pedestrian.get_street()
+
+    def distance_to_pedestrian(self, pedestrian):
+        if (not self.pedestrian_in_same_street(pedestrian)):
+            return c.HEIGHT
+        ped_pos = pedestrian.get_position()
+        if self.position <= ped_pos:
+            return self.position - ped_pos
+        elif self.position >= ped_pos + c.PEDESTRIAN_DIAMETER:
+            return ped_pos + c.PEDESTRIAN_DIAMETER - self.position
+        else:
+            return 0
+    
+    def pedestrian_is_approaching(self, pedestrian):
+        if (not self.pedestrian_in_same_street(pedestrian)):
+            return False
+        
+        ped_dir = pedestrian.get_direction()
+        car_x = self.lane.get_car_x()
+        if ped_dir == c.DIRECTION_LEFT:
+            return car_x > pedestrian.get_x() + c.PEDESTRIAN_DIAMETER
+        else:
+            return car_x + c.CAR_WIDTH < pedestrian.get_x()
 
     def calculate_position(self):
         direct = self.lane.get_direction()

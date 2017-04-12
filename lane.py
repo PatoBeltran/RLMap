@@ -12,8 +12,17 @@ class Lane():
     def get_car_x(self):
         return self.x + self.width/2 - c.CAR_WIDTH/2
 
+    def get_street(self):
+        return self.street
+
     def get_direction(self):
         return self.street.get_direction()
+
+    def get_start_position(self):
+        return self.x
+    
+    def get_end_position(self):
+        return self.x + self.width
 
     def draw(self, canvas):
         canvas.create_rectangle(self.x, 0, self.x+self.width, \
