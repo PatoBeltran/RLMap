@@ -21,8 +21,8 @@ class Car():
         self.lane = new_lane
     
     def distance_to_light(self):
-        direct = self.lane.get_direction()
-        if direct == c.DIRECTION_DOWN:
+        direction = self.lane.get_direction()
+        if direction == c.DIRECTION_DOWN:
             if self.position <= c.LIGHT_POSITION:
                 return c.LIGHT_POSITION - self.position
             elif self.position >= c.LIGHT_POSITION + c.LIGHT_HEIGHT:
@@ -37,24 +37,18 @@ class Car():
             else:
                 return 0
 
-    def pedestrian_in_same_street(self, pedestrian):
-        return self.lane.get_street() == pedestrian.get_street()
-
     def distance_to_pedestrian(self, pedestrian):
-        if (not self.pedestrian_in_same_street(pedestrian)):
-            return c.HEIGHT
-        ped_pos = pedestrian.get_position()
-        if self.position <= ped_pos:
-            return self.position - ped_pos
-        elif self.position >= ped_pos + c.PEDESTRIAN_DIAMETER:
-            return ped_pos + c.PEDESTRIAN_DIAMETER - self.position
+        ped_pos = self._calculate_position_in_lane(pedestrian.get_position())
+        car_pos = self._calculate_position()
+
+        if car_pos + c.CAR_HEIGHT <= ped_pos:
+            return car_pos + c.CAR_HEIGHT - ped_pos
+        elif car_pos >= ped_pos + c.PEDESTRIAN_DIAMETER:
+            return ped_pos + c.PEDESTRIAN_DIAMETER - car_pos
         else:
             return 0
     
     def pedestrian_is_approaching(self, pedestrian):
-        if (not self.pedestrian_in_same_street(pedestrian)):
-            return False
-        
         ped_dir = pedestrian.get_direction()
         car_x = self.lane.get_car_x()
         if ped_dir == c.DIRECTION_LEFT:
@@ -62,23 +56,25 @@ class Car():
         else:
             return car_x + c.CAR_WIDTH < pedestrian.get_x()
 
-    def calculate_position(self):
-        direct = self.lane.get_direction()
-        if direct == c.DIRECTION_DOWN:
-            return self.position
+    def _calculate_position(self):
+        return self._calculate_position_in_lane(self.position)
+
+    def _calculate_position_in_lane(self, position):
+        if self.lane.get_direction() == c.DIRECTION_DOWN:
+            return position
         else:
             pos = 0
-            if self.position == 0:
+            if position == 0:
                 pos = c.HEIGHT
             else:
-                pos = (-1 * (self.position - c.HEIGHT)%c.HEIGHT)
+                pos = (-1 * (position - c.HEIGHT)%c.HEIGHT)
             return pos - c.CAR_HEIGHT
+
 
     def update(self):
         self.position = (self.position + self.speed) % c.HEIGHT
 
     def draw(self, canvas):
-        y = self.calculate_position()
+        y = self._calculate_position()
         x = self.lane.get_car_x()
-        # print 'The value of x is ' + repr(x) + ', and y is ' + repr(y) + ', and color is ' + self.color
         canvas.create_rectangle(x, y, x + c.CAR_WIDTH, y + c.CAR_HEIGHT, fill=self.color, outline=c.COLOR_BLACK)
