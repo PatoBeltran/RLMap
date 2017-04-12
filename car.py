@@ -140,6 +140,18 @@ class Car():
     def update(self):
         self.position = (self.position + self.speed) % c.HEIGHT
 
+    def increment_speed(self):
+        self.speed += c.SPEED_DELTA
+
+    def decrement_speed(self):
+        self.speed -= c.SPEED_DELTA
+    
+    def stop_car(self):
+        self.speed = 0
+
+    def get_lane(self):
+        return self.lane
+
     def draw(self, canvas):
         y = self._calculate_position()
         x = self.lane.get_car_x()

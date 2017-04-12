@@ -8,10 +8,10 @@ class rl:
         self.epsilon = 0.1
         self.lights_module = lightsRL(agent)
     
-    def rl_main(self):
+    def rl_main(self, lanes):
         if (self.iterator < 500):
-            mean_reward = self.lights_module.run_simulation(epsilon)
-            plt.scatter(i, mean_reward)
+            mean_reward = self.lights_module.run_simulation(self.epsilon, lanes)
+            plt.scatter(self.iterator, mean_reward)
         
         self.iterator += 1
 

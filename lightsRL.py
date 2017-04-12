@@ -2,6 +2,7 @@ from __future__ import division
 import math
 import random
 import numpy as np
+import constants as c
 
 ########################################
 # lightsRL
@@ -95,26 +96,69 @@ class lightsRL():
     #
     # @param state: the current state of the agent
     # @param dec: action that agent makes at current state
+    # @param lanes: an array of lanes' objects
     # @return: a tuple of the type (new_state, reward)
     ########################################
-    def next_step(self, state, action):
+    def next_step(self, state, action, lanes):
         # Set current reward to 0 by default
         reward = 0
 
         # Set new state to 1 by default
         new_state = 1
 
-        # Make agent take chosen action and determine new state
+        # Make agent take chosen action
+
         # Action = Increment velocity by 10
         if (action == 1):
+            self.agent.increment_speed()
+            self.agent.update()
+
         # Action = Decrement velocity by 10
         elif (action == 2):
+            self.agent.decrement_speed()
+            self.agent.update()
+
         # Action = Change to the lane to the left
         elif (action == 3):
+            for i in range(len(lanes)):
+                if (self.agent.get_lane() == lanes[i] and i != 0):
+                    self.agent.change_lanes(lanes[i - 1])
+            self.agent.update()
+
         # Action = Change to the lane to the right
         elif (action == 4):
+            for i in range(len(lanes)):
+                if (self.agent.get_lane() == lanes[i] and i != len(lanes) - 1):
+                    self.agent.change_lanes(lanes[i + 1])
+            self.agent.update()
+
         # Action = Stop
         else:
+            self.agent.stop_car()
+            self.agent.update()
+
+        # Determine new state
+        distance_to_light = self.agent.distance_to_light()
+        # Off quadrant
+        if (distance_to_light > c.MAX_SPEED or distance_to_light == -1):
+            new_state = 1
+        else:
+            # If beyond light, then off quadrant
+            if (not self.agent.approaching_to_light()):
+                new_state = 1
+            # On quadrant
+            else:
+                lane = self.agent.get_lane()
+
+                # Green light
+                if (lane.is_light_green()):
+                    new_state = 2
+                # Yellow light
+                elif (lane.is_light_yellow()):
+                    new_state = 3
+                # Red light
+                else:
+                    new_state = 4
 
         # If original state was to be on the stoplights quadrant with
         # a green light and new state is to be off the stoplights quadrant,
@@ -142,9 +186,10 @@ class lightsRL():
     #
     # @param self: The instance of the class to use.
     # @param epsilon: value to toogle between exploration and exploitation
+    # @param lanes: an array of lanes' objects
     # @return: mean reward up until current simulation
     ########################################
-    def run_simulation(self, epsilon):
+    def run_simulation(self, epsilon, lanes):
         # Get current state
         state = 0 #Change this to actual state
 
@@ -162,7 +207,7 @@ class lightsRL():
         self.av_count[sa] += 1
 
         # Make next step and get new state and reward
-        state, reward = next_step(state, action)
+        state, reward = next_step(state, action, lanes)
 
         # Update average of action taken
         k = self.av_count[sa]
