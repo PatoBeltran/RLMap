@@ -21,6 +21,8 @@ class Car():
         self.lane = new_lane
     
     def distance_to_light(self):
+        if not self.lane.has_light():
+            return -1
         direction = self.lane.get_direction()
         if direction == c.DIRECTION_DOWN:
             if self.position <= c.LIGHT_POSITION:
@@ -36,6 +38,15 @@ class Car():
                 return self.position - c.LIGHT_POSITION
             else:
                 return 0
+
+    def approaching_to_light(self):
+        if self.lane.has_light():
+            direction = self.lane.get_direction()
+            if direction == c.DIRECTION_DOWN and self.position <= c.LIGHT_POSITION:
+                return True
+            if direction == c.DIRECTION_UP and self.position <= c.LIGHT_POSITION - c.LIGHT_HEIGHT:
+                return True
+        return False
 
     def distance_to_pedestrian(self, pedestrian):
         ped_pos = self._calculate_position_in_lane(pedestrian.get_position())
