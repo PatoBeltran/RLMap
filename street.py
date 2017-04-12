@@ -15,7 +15,7 @@ class Street():
         for i in range(0, c.LANES_PER_STREET):
             self.lanes.append(Lane(self, initial_x + i*(c.LANE_WIDTH+c.DOTTED_LINE_WIDTH), i == c.LANES_PER_STREET - 1))
 
-        self.light_pos = randint(100, c.HEIGHT-100)
+        self.light_pos = c.LIGHT_POSITION
         self.light = Light(self.x, self.light_pos, self.width)
     
     def get_direction(self):

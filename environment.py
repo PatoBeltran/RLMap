@@ -78,8 +78,17 @@ class Environment():
     def _populate_with_cars(self):
         for street in self.streets:
             lanes = street.get_lanes()
-            for lane in lanes:   
-                self.cars.append(Car.create_new_car_at_position(lane, 0, randint(50, c.HEIGHT-50)))
+            i = 0
+            for lane in lanes:
+                car_pos = 0
+                
+                if (i%2 == 0):
+                    car_pos = randint(50, c.LIGHT_POSITION-100)
+                else:
+                    car_pos = randint(c.LIGHT_POSITION+100, c.HEIGHT-50)
+
+                self.cars.append(Car.create_new_car_at_position(lane,0,car_pos))
+                i += 1
 
     def _create_random_pedestrian(self):
         if (len(self.pedestrians) <= c.LIMIT_OF_PEDESTRIANS):
