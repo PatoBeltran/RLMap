@@ -14,15 +14,6 @@ class Light():
     def _change_light(self, new_light):
         self.light_on = new_light
 
-    def stop(self):
-        self._change_light(c.YELLOW_LIGHT)
-        self.t = Timer(c.YELLOW_LIGHT_DURATION, self._set_red)
-        self.t.start()
-
-    def go(self):
-        self.cancel_timer()
-        self._change_light(c.GREEN_LIGHT)
-
     def _set_red(self):
         self._change_light(c.RED_LIGHT)
         self.t = Timer(randint(c.YELLOW_LIGHT_DURATION, c.YELLOW_LIGHT_DURATION+10), self._set_green)
@@ -31,6 +22,15 @@ class Light():
     def _set_green(self):
         self._change_light(c.GREEN_LIGHT)
         self.t = 0
+
+    def stop(self):
+        self._change_light(c.YELLOW_LIGHT)
+        self.t = Timer(c.YELLOW_LIGHT_DURATION, self._set_red)
+        self.t.start()
+
+    def go(self):
+        self.cancel_timer()
+        self._change_light(c.GREEN_LIGHT)
 
     def cancel_timer(self):
         if (self.t != 0):

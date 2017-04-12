@@ -2,8 +2,6 @@ import constants as c
 from random import randint
 from pedestrian import Pedestrian
 
-COLORS = ["#1abc9c", "#2ecc71", "#3498db", "#9b59b6", "#34495e", "#f1c40f", "#e67e22", "#e74c3c"]
-
 class Car():
     def __init__(self, color, lane, speed, position):
 	self.color = color
@@ -17,7 +15,7 @@ class Car():
 
     @staticmethod
     def create_new_car_at_position(lane, speed, pos):
-        return Car(COLORS[randint(0,7)], lane, speed, pos)
+        return Car(c.COMPUTER_COLOR, lane, speed, pos)
 
     def change_lanes(self, new_lane):
         self.lane = new_lane

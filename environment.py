@@ -1,8 +1,8 @@
 from Tkinter import *
 import constants as c
-from street import Street
 from threading import Timer
 from car import Car
+from lane import Lane
 from pedestrian import Pedestrian
 from random import randint
 import time
@@ -13,8 +13,8 @@ class Environment():
         self.master.title("UT Street Map")
         self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
         
-        street_w = (c.LANE_WIDTH+c.DOTTED_LINE_WIDTH)*c.LANES_PER_STREET - c.DOTTED_LINE_WIDTH + c.STREET_MIDDLE_WIDTH
-        self.width = c.NUMBER_OF_STREETS * street_w - c.STREET_MIDDLE_WIDTH;
+        lane_w = c.LANE_WIDTH+c.DOTTED_LINE_WIDTH
+        self.width = (lane_w)*c.LANES - c.DOTTED_LINE_WIDTH
         
         self.canvas = Canvas(self.master, width = self.width, height = c.HEIGHT, bg = c.COLOR_WHITE)
         self.canvas.pack()
@@ -24,11 +24,15 @@ class Environment():
         self.t_p = 0
         self.cars = []
         self.pedestrians = []
-        self.streets = []
+        self.lanes = []
+        self.closing = False
 
-        for i in range(0, c.NUMBER_OF_STREETS):
-            self.streets.append(Street(i*street_w, (c.DIRECTION_DOWN if i < c.NUMBER_OF_STREETS/2 else c.DIRECTION_UP), i == c.NUMBER_OF_STREETS-1))
+        for i in range(0, c.LANES):
+            self.lanes.append(Lane(i*lane_w, (c.DIRECTION_DOWN if i < c.LANES/2 else c.DIRECTION_UP), i == c.LANES-1))
 
+        for lane in self.lanes:
+            lane.create_light()
+        
         self._populate_with_cars()
         self.draw(self.canvas)
         self.start_movement()
@@ -43,13 +47,14 @@ class Environment():
         self.pedestrians = filter(lambda ped: not ped.has_finished_crossing(), self.pedestrians)
 
     def draw(self, canvas):
-        canvas.delete("all")
-        for i in range(0, c.NUMBER_OF_STREETS):
-            self.streets[i].draw(self.canvas)
-        for car in self.cars:
-            car.draw(canvas)
-        for pedestrian in self.pedestrians:
-            pedestrian.draw(canvas)
+        if not self.closing:
+            canvas.delete("all")
+            for lane in self.lanes:
+                lane.draw(canvas)
+            for car in self.cars:
+                car.draw(canvas)
+            for pedestrian in self.pedestrians:
+                pedestrian.draw(canvas)
 
     def _move(self):
         self.update()
@@ -58,50 +63,55 @@ class Environment():
         self.start_movement()
             
     def start_movement(self):
-        self.t = Timer(1, self._move)
+        self.t = Timer(0.1, self._move)
         self.t.start()
     
     def random_stop(self):
-        self.t_s = Timer(randint(0, c.RANDOM_STOP_MAX), self._stop_random_street)
+        self.t_s = Timer(randint(0, c.RANDOM_STOP_MAX), self._stop_random_lane)
         self.t_s.start()
 
     def random_pedestrian(self):
         self.t_p = Timer(randint(0, c.RANDOM_PEDESTRIAN_MAX), self._create_random_pedestrian)
         self.t_p.start()
 
-    def _stop_random_street(self):
-        strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
-        if (strt.is_light_green()):
-            strt.turn_light_red()
+    def _stop_random_lane(self):
+        lane = self.lanes[randint(0,c.LANES-1)]
+        if (lane.has_light() and lane.is_light_green()):
+            lane.turn_light_red()
         self.random_stop()
 
     def _populate_with_cars(self):
-        for street in self.streets:
-            lanes = street.get_lanes()
-            i = 0
-            for lane in lanes:
-                car_pos = 0
-                
-                if (i%2 == 0):
-                    car_pos = randint(50, c.LIGHT_POSITION-100)
-                else:
-                    car_pos = randint(c.LIGHT_POSITION+100, c.HEIGHT-50)
+        i = 0
+        for lane in self.lanes:
+            car_pos = 0
+            
+            if (i%2 == 0):
+                car_pos = randint(50, c.LIGHT_POSITION-100)
+            else:
+                car_pos = randint(c.LIGHT_POSITION+100, c.HEIGHT-50)
 
-                self.cars.append(Car.create_new_car_at_position(lane,0,car_pos))
-                i += 1
+            self.cars.append(Car.create_new_car_at_position(lane, 10, car_pos))
+            i += 1
 
     def _create_random_pedestrian(self):
         if (len(self.pedestrians) <= c.LIMIT_OF_PEDESTRIANS):
-            strt = self.streets[randint(0,c.NUMBER_OF_STREETS-1)]
-            self.pedestrians.append(Pedestrian.create_random(strt))
+            rand = randint(0, 1)
+            ped = 0
+            if rand == 0:
+                ped = Pedestrian.create_random(0, self.width)
+            else:
+               ped = Pedestrian.create_random(self.width, 0)
+            self.pedestrians.append(ped)
+
         self.random_pedestrian()
 
     def on_closing(self):
+        self.closing = True
         if self.t != 0: self.t.cancel() 
         if self.t_s != 0: self.t_s.cancel() 
         if self.t_p != 0: self.t_p.cancel() 
-        for strt in self.streets:
-            strt.cancel_light()
+        for lane in self.lanes:
+            lane.cancel_light()
         self.master.destroy()
             
 
