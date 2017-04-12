@@ -31,6 +31,8 @@ class Car():
         
     def change_lanes(self, new_lane):
         self.lane = new_lane
+        if (self.lane.get_direction() != new_lane.get_direction()):
+            self.position = (-1 * (self.position - c.HEIGHT)%c.HEIGHT)
     
     def get_direction(self):
         return self.lane.get_direction()
