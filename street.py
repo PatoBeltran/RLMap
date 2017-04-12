@@ -51,6 +51,9 @@ class Street():
     def cancel_light(self):
         self.light.cancel_timer()
         
+    def get_lanes(self):
+        return self.lanes
+    
     def draw(self, canvas):
         canvas.create_rectangle(self.x, 0, self.x+self.width, c.HEIGHT, fill=c.COLOR_STREET_GRAY)
         if (not self.is_last):

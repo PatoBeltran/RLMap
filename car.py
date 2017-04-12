@@ -12,7 +12,11 @@ class Car():
 
     @staticmethod
     def create_new_car(lane, speed):
-        return Car(COLORS[randint(0,7)], lane, speed, 0)
+        return create_new_car_at_position(lane, speed, 0)
+
+    @staticmethod
+    def create_new_car_at_position(lane, speed, pos):
+        return Car(COLORS[randint(0,7)], lane, speed, pos)
 
     def change_lanes(self, new_lane):
         self.lane = new_lane
