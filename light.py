@@ -39,6 +39,9 @@ class Light():
 
     def is_green(self):
         return self.light_on == c.GREEN_LIGHT
+
+    def is_yellow(self):
+        return self.light_on == c.YELLOW_LIGHT
     
     def draw(self, canvas):
         green_color = c.COLOR_BLACK

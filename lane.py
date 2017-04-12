@@ -32,6 +32,9 @@ class Lane():
     def is_light_green(self):
         return self.light.is_green()
 
+    def is_light_yellow(self):
+        return self.light.is_yellow()
+
     def cancel_light(self):
         if self.light != 0:
             self.light.cancel_timer()
